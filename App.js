@@ -9,7 +9,7 @@ connectDB();
 const app = express();
 app.use(express.json());
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT|| 5000;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/api/users", userRoutes);
