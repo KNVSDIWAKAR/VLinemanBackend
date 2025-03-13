@@ -4,16 +4,19 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import towerRoutes from "./routes/towerRoutes.js";
+
 dotenv.config();
 connectDB();
-const app = express();
-app.use(express.json());
 
-const PORT = process.env.PORT|| 5000;
+const app = express();
 app.use(cors({ origin: "*" }));
-app.use(express.json());
+app.use(express.json()); 
+
+const PORT = process.env.PORT || 5000;
+
 app.use("/api/users", userRoutes);
 app.use("/api/towers", towerRoutes);
+
 app.get("/", (req, res) => {
   res.send("API Running");
 });
