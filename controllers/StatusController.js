@@ -1,10 +1,9 @@
 import Status from "../models/Status.js";
 import mongoose from "mongoose";
 
-// Get the status of a specific Tower Task
 export const getStatus = async (req, res) => {
   try {
-    const { towerId } = req.params;
+    const towerId = req.params.towerId || req.params.id;
     if (!towerId) {
       return res.status(400).json({ message: "Tower ID is required" });
     }
@@ -22,10 +21,9 @@ export const getStatus = async (req, res) => {
   }
 };
 
-// Update the status of a Tower Task
 export const updateStatus = async (req, res) => {
   try {
-    const { towerId } = req.params;
+    const towerId = req.params.towerId || req.params.id;
     const { step } = req.body;
 
     if (!towerId || !step) {
@@ -53,10 +51,9 @@ export const updateStatus = async (req, res) => {
     }
 
     // If step is restarted, update the timestamp again
-    status[step] = {
-      status: true,
-      date: new Date(),
-    };
+    status[step] = status[step] || {}; // Preserve existing data if available
+    status[step].status = true;
+    status[step].date = new Date();
 
     await status.save();
     res.status(200).json({ message: `${step} updated successfully`, status });
