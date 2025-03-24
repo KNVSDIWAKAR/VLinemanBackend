@@ -16,7 +16,7 @@ export const getStatus = async (req, res) => {
 
     res.status(200).json(status);
   } catch (error) {
-    console.error("Error fetching status:", error);
+    console.error("Error fetching status:", error.message, error.stack);
     res.status(500).json({ message: "Server Error", error });
   }
 };
@@ -26,10 +26,17 @@ export const updateStatus = async (req, res) => {
     const towerId = req.params.towerId || req.params.id;
     const { step } = req.body;
 
+    console.log("Received towerId:", towerId);
+    console.log("Received step:", step);
+
     if (!towerId || !step) {
       return res
         .status(400)
         .json({ message: "Tower ID and step are required" });
+    }
+
+    if (!mongoose.connection.readyState) {
+      return res.status(500).json({ message: "Database not connected" });
     }
 
     const validSteps = [
@@ -46,19 +53,19 @@ export const updateStatus = async (req, res) => {
     let status = await Status.findOne({ TowerId: towerId });
 
     if (!status) {
-      // If no status exists, create a new entry
+      console.log("No existing status found, creating a new record");
       status = new Status({ TowerId: towerId });
     }
 
-    // If step is restarted, update the timestamp again
     status[step] = status[step] || {}; // Preserve existing data if available
     status[step].status = true;
     status[step].date = new Date();
 
     await status.save();
+    console.log(`Updated ${step} successfully for towerId: ${towerId}`);
     res.status(200).json({ message: `${step} updated successfully`, status });
   } catch (error) {
-    console.error("Error updating status:", error);
+    console.error("Error updating status:", error.message, error.stack);
     res.status(500).json({ message: "Server Error", error });
   }
 };
