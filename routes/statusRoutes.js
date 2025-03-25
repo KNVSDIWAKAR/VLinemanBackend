@@ -1,12 +1,12 @@
 import express from "express";
-import { getStatus, updateStatus } from "../controllers/StatusController";
+import { getStatus, updateStatus } from "../controllers/StatusController.js";
 
 const router = express.Router();
 
 // Get status of a specific Tower Task
-router.get("/:towerId", getStatus);
+router.get("/:id", getStatus);
 
 // Update status of a specific Tower Task
-router.put("/:towerId", updateStatus);
+router.put("/:id", updateStatus);
 
 export default router;
